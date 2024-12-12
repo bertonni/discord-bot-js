@@ -4,6 +4,8 @@ const path = require("node:path");
 const fs = require("node:fs");
 dotenv.config();
 
+const { guildId, discordToken } = require("./config.json");
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
@@ -31,7 +33,6 @@ for (const folder of commandFolders) {
 }
 
 async function clearCommands() {
-  const guildId = process.env.GUILD_ID;
   const guild = client.guilds.cache.get(guildId);
   if (guild) {
     await guild.commands.set([]);
@@ -76,4 +77,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(discordToken);

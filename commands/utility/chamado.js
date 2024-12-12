@@ -1,10 +1,7 @@
 const axios = require("axios");
 const { SlashCommandBuilder } = require("discord.js");
 
-axios.defaults.baseURL = "http://chamado.igarassu/apirest.php";
-
-const sessionToken = process.env.SESSION_TOKEN;
-const appToken = process.env.APP_TOKEN;
+const { getNewSessionToken, openTicket } = require("../../utils/actions.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -27,39 +24,11 @@ module.exports = {
     ),
   async execute(interaction) {
     try {
-      const subject = interaction.options.getString("assunto");
-      const message = interaction.options
-        .getString("mensagem")
-        .replaceAll("--", "\n");
-
-      const ticketData = {
-        input: {
-          name: subject,
-          content: `\nSolicitante: ${interaction.user.globalName}\n\n${message}`,
-          urgency: 3, // Urgência do chamado (1 - Muito urgente, 5 - Não urgente)
-          impact: 3, // Impacto do chamado (1 - Total, 5 - Nenhum)
-          status: 1, // Status do ticket (1 - Novo, 2 - Em andamento, etc.)
-          priority: 3,
-        },
-      };
-
-      const response = await axios.post("Ticket", ticketData, {
-        headers: {
-          "Content-Type": "application/json",
-          "Session-Token": sessionToken,
-          "App-Token": appToken,
-        },
-      });
-      console.log(response.status);
-      if (response.status === 201) {
-        await interaction.reply(response.data.message);
-      } else {
-        await interaction.reply(
-          "Algo aconteceu e não foi possível abrir o chamado. Procure a equipe da @CTIC para maiores informações"
-        );
-      }
+      await openTicket(interaction);
     } catch (error) {
       console.log("error", error);
+      await getNewSessionToken();
+      await openTicket(interaction);
     }
   },
 };
