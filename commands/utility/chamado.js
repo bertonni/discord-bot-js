@@ -21,6 +21,7 @@ module.exports = {
         .setName("mensagem")
         .setDescription("Descreva seu problema")
         .setRequired(true)
+        .setMaxLength(10000)
     ),
   async execute(interaction) {
     try {
