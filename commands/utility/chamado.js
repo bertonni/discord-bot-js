@@ -19,14 +19,18 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("mensagem")
-        .setDescription("Descreva seu problema")
+        .setDescription(
+          'Descreva seu problema (use "--" para quebra de linha).'
+        )
         .setRequired(true)
-        .setMaxLength(10000)
+        .setMaxLength(6000)
     ),
   async execute(interaction) {
     try {
       const subject = interaction.options.getString("assunto");
-      const message = interaction.options.getString("mensagem");
+      const message = interaction.options
+        .getString("mensagem")
+        .replaceAll("--", "\n");
 
       const ticketData = {
         input: {

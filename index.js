@@ -30,8 +30,20 @@ for (const folder of commandFolders) {
   }
 }
 
-client.once(Events.ClientReady, (readyClient) => {
+async function clearCommands() {
+  const guildId = process.env.GUILD_ID;
+  const guild = client.guilds.cache.get(guildId);
+  if (guild) {
+    await guild.commands.set([]);
+    console.log("comandos limpos da guild");
+  }
+  await client.application.commands.set([]);
+  console.log("comandos limpos globais");
+}
+
+client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  // await clearCommands();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
